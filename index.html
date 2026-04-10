@@ -6,12 +6,10 @@
 <title>Test SEI — Biodiacritique Nutritionnel</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  /* Le design original que vous aimiez */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0f0ee; --text: #111110; --text2: #6b6b68; --text3: #9b9b98;
+    --bg: #ffffff; --bg2: #f7f7f5; --text: #111110; --text2: #6b6b68; --text3: #9b9b98;
     --border: rgba(0,0,0,0.10); --border2: rgba(0,0,0,0.18); --radius: 12px; --radius-sm: 8px;
-    --green-bg: #e8f5e9; --green-txt: #1b5e20; --amber-bg: #fff8e1; --amber-txt: #e65100;
   }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg2); color: var(--text); padding: 24px 16px; display: flex; justify-content: center; }
   .container { width: 100%; max-width: 520px; }
@@ -19,15 +17,15 @@
   .screen { display: none; }
   .screen.active { display: block; }
   .product-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; }
-  .product-img-box { width: 100%; height: 300px; background: #eee; border-bottom: 0.5px solid var(--border); }
+  .product-img-box { width: 100%; height: 320px; background: #eee; border-bottom: 0.5px solid var(--border); }
   .product-img-box img { width: 100%; height: 100%; object-fit: cover; }
-  .product-top { padding: 20px; background: var(--bg2); }
-  .product-name { font-size: 32px; font-weight: 300; margin-bottom: 8px; }
+  .product-top { padding: 20px; background: var(--bg2); border-bottom: 0.5px solid var(--border); }
+  .product-name { font-size: 34px; font-weight: 300; letter-spacing: -0.02em; line-height: 1.1; }
   .q-section { padding: 20px; }
-  .choice-btn { width: 100%; padding: 14px; margin-bottom: 8px; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); background: var(--bg); cursor: pointer; text-align: left; }
-  .choice-btn.selected { border: 1.5px solid var(--text); background: var(--bg2); }
+  .choice-btn { width: 100%; padding: 14px; margin-bottom: 8px; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); background: var(--bg); cursor: pointer; text-align: left; font-size: 15px; transition: 0.2s; }
+  .choice-btn.selected { border: 2px solid var(--text); background: var(--bg2); font-weight: 500; }
   .next-btn { width: 100%; padding: 16px; background: var(--text); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 500; margin-top: 10px; }
-  .next-btn:disabled { opacity: 0.3; }
+  .next-btn:disabled { opacity: 0.2; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -35,56 +33,53 @@
   <div class="logo"><span>Biodiacritique Nutritionnel · Test SEI</span><span style="font-size:9px">INPI DSO2026010264</span></div>
 
   <div class="screen active" id="s-intro">
-    <h1 style="font-size:22px; margin-bottom:15px;">Test de perception — Scarification</h1>
-    <p style="color:var(--text2); line-height:1.6; margin-bottom:20px;">
-        Évaluation de l'effet des graphies sur le comportement d'achat (20 produits).
-    </p>
-    <button class="next-btn" onclick="startTest()">Commencer le test →</button>
+    <h1 style="font-size:24px; margin-bottom:15px; font-weight:400;">Test de perception</h1>
+    <p style="color:var(--text2); line-height:1.6; margin-bottom:20px;">Veuillez répondre spontanément pour chacun des 20 produits présentés.</p>
+    <button class="next-btn" onclick="startTest()">Démarrer le test →</button>
   </div>
 
   <div class="screen" id="s-test">
     <div id="prog-lbl" style="font-size:11px; color:var(--text3); margin-bottom:10px;">Produit 1 / 20</div>
     <div class="product-card">
-      <div class="product-img-box"><img id="prod-img" src="" alt="Produit"></div>
-      <div class="product-top"><div class="product-name" id="prod-name"></div></div>
+      <div class="product-img-box"><img id="prod-img" src="" alt=""></div>
+      <div class="product-top">
+        <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px;">Nomenclature Biodiacritique :</div>
+        <div class="product-name" id="prod-name"></div>
+      </div>
       <div class="q-section">
         <p style="font-weight:500; margin-bottom:15px;">Acheteriez-vous ce produit ?</p>
-        <button class="choice-btn" onclick="selectQ(0)">✓ Oui, j'achète</button>
-        <button class="choice-btn" onclick="selectQ(1)">✕ Non, j'évite</button>
-        <button class="next-btn" id="next-btn" onclick="nextStep()" disabled>Suivant →</button>
+        <button class="choice-btn" id="btn-oui" onclick="selectQ(0)">✓ Oui, j'achète</button>
+        <button class="choice-btn" id="btn-non" onclick="selectQ(1)">✕ Non, j'évite</button>
+        <button class="next-btn" id="next-btn" onclick="nextStep()" disabled>Valider et produit suivant →</button>
       </div>
     </div>
   </div>
 
   <div class="screen" id="s-results">
-    <h2>Résultats SEI</h2>
-    <div id="res-box" style="background:white; padding:20px; border-radius:12px; margin-top:20px; border:0.5px solid #ddd;"></div>
-    <button class="next-btn" onclick="location.reload()">Refaire le test</button>
+    <h2 style="font-weight:400;">Analyse terminée</h2>
+    <div id="res-box" style="background:white; padding:25px; border-radius:12px; margin:20px 0; border:0.5px solid #ddd;"></div>
+    <button class="next-btn" onclick="location.reload()">Recommencer le test</button>
   </div>
 </div>
 
 <script>
-// CORRESPONDANCE EXACTE PRODUIT <-> IMAGE
+// SYNCHRONISATION : Nom Biodiacritique <-> Votre fichier réel sur GitHub
 const PRODUCTS = [
-  // NOVA 1
-  { name: "bœuf", n: 1, img: "nova1_pomme.jpg" }, // Note: Vous semblez utiliser pomme pour boeuf selon vos uploads
+  { name: "bœuf", n: 1, img: "nova1_pomme.jpg" }, 
   { name: "œufs", n: 1, img: "nova1_oeuf.jpg" },
   { name: "tomates", n: 1, img: "nova1_tomates.jpg" },
   { name: "noix", n: 1, img: "nova1_noix.jpg" },
   { name: "lentilles", n: 1, img: "nova1_lentilles.jpg" },
-  // NOVA 2
   { name: "påin", n: 2, img: "nova2_pain.jpg" },
   { name: "frºmåge", n: 2, img: "nova2_fromage.jpg" },
   { name: "pizzå", n: 2, img: "nova2_pasta.jpg" },
   { name: "sUcre", n: 2, img: "nova2_yaourt.jpg" },
   { name: "cerealẹs", n: 2, img: "nova2_compote.jpg" },
-  // NOVA 3
   { name: "jªmbºn", n: 3, img: "nova3_jambon.jpg" },
   { name: "crėvettẹ", n: 3, img: "nova3_soupe.jpg" },
   { name: "sUUcre", n: 3, img: "nova3_biscuit.jpg" },
   { name: "pOUlet", n: 3, img: "nova3_nuggets.jpg" },
   { name: "frºmAge", n: 3, img: "nova3_cereales.jpg" },
-  // NOVA 4
   { name: "sUUUcre", n: 4, img: "nova4_soda.jpg" },
   { name: "hAmburgEr", n: 4, img: "nova4_hamburger.jpg" },
   { name: "chºcºlåt", n: 4, img: "nova4_barre.jpg" },
@@ -104,7 +99,6 @@ function show(id) {
 }
 function loadProd() {
   const p = PRODUCTS[order[idx]];
-  // On cherche l'image directement sur la racine comme sur votre GitHub
   document.getElementById('prod-img').src = p.img;
   document.getElementById('prod-name').textContent = p.name;
   document.getElementById('prog-lbl').textContent = `Produit ${idx+1} / 20`;
@@ -114,7 +108,8 @@ function loadProd() {
 }
 function selectQ(v) {
   currentAns = v;
-  document.querySelectorAll('.choice-btn').forEach((b, i) => b.classList.toggle('selected', i === v));
+  document.getElementById('btn-oui').classList.toggle('selected', v === 0);
+  document.getElementById('btn-non').classList.toggle('selected', v === 1);
   document.getElementById('next-btn').disabled = false;
 }
 function nextStep() {
@@ -130,10 +125,12 @@ function showResults() {
   const r1 = (n1.filter(r => r.abandon).length / n1.length) * 100;
   const sei = ((r4 - r1)/100).toFixed(2);
   document.getElementById('res-box').innerHTML = `
-    <p>Taux d'évitement NOVA 4 : <b>${r4}%</b></p>
-    <p>Taux d'évitement NOVA 1 : <b>${r1}%</b></p>
-    <hr style="margin:15px 0; border:0.5px solid #eee;">
-    <p style="font-size:20px;">Indice SEI : <b>${sei}</b></p>
+    <div style="font-size:13px; color:gray; margin-bottom:20px;">Indice de Scarification Éthique (SEI)</div>
+    <div style="font-size:48px; font-weight:300; margin-bottom:20px;">${sei}</div>
+    <div style="font-size:14px; line-height:1.5;">
+        Taux d'évitement NOVA 4 : <b>${r4}%</b><br>
+        Taux d'évitement NOVA 1 : <b>${r1}%</b>
+    </div>
   `;
 }
 </script>
