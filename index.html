@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test SEI — Biodiacritique Nutritionnel</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg2: #f7f7f5;
+    --bg3: #f0f0ee;
+    --text: #111110;
+    --text2: #6b6b68;
+    --text3: #9b9b98;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --green-bg: #e8f5e9;
+    --green-txt: #1b5e20;
+    --amber-bg: #fff8e1;
+    --amber-txt: #e65100;
+    --orange-bg: #fff3e0;
+    --orange-txt: #bf360c;
+    --red-bg: #fce4ec;
+    --red-txt: #880e4f;
+    --success-bg: #e8f5e9;
+    --success-txt: #1b5e20;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg2);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px 48px;
+  }
+
+  .container { width: 100%; max-width: 520px; }
+
+  .logo {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .inpi-badge {
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    background: var(--bg3);
+    padding: 2px 7px;
+    border-radius: 6px;
+    color: var(--text3);
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* Progress */
+  .prog-wrap { margin-bottom: 6px; }
+  .prog-track { height: 2px; background: var(--border); border-radius: 2px; }
+  .prog-fill { height: 2px; background: var(--text); border-radius: 2px; transition: width 0.4s ease; }
+  .prog-label { font-size: 11px; color: var(--text3); margin-top: 6px; margin-bottom: 20px; }
+
+  /* Product card */
+  .product-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .product-top {
+    background: var(--bg2);
+    padding: 20px 20px 16px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .product-name {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .product-meta { display: flex; gap: 10px; align-items: center; }
+  .product-price { font-size: 13px; color: var(--text2); }
+  .nova-badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+
+  /* Questions */
+  .q-section { padding: 18px 20px; }
+  .q-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .q-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .q-sub {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  /* Choice buttons */
+  .choices { display: grid; gap: 7px; margin-bottom: 16px; }
+  .choice-btn {
+    width: 100%;
+    padding: 13px 16px;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    text-align: left;
+    line-height: 1.4;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .choice-btn:hover { background: var(--bg2); }
+  .choice-btn.selected {
+    border: 1.5px solid var(--text);
+    background: var(--bg2);
+  }
+
+  /* Scale */
+  .scale-row { display: flex; gap: 6px; margin-bottom: 6px; }
+  .scale-btn {
+    flex: 1;
+    padding: 11px 4px;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.12s;
+  }
+  .scale-btn:hover { background: var(--bg2); }
+  .scale-btn.selected { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text3);
+    margin-bottom: 16px;
+  }
+
+  /* Feedback */
+  .feedback {
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+    line-height: 1.55;
+    border: 0.5px solid var(--border);
+  }
+  .feedback.info { background: var(--bg2); color: var(--text2); }
+  .feedback.good { background: var(--success-bg); color: var(--success-txt); border-color: transparent; }
+
+  /* Next button */
+  .next-wrap { padding: 0 20px 18px; }
+  .next-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--text);
+    color: var(--bg);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.12s;
+  }
+  .next-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* Divider */
+  .q-divider { height: 0.5px; background: var(--border); margin: 0; }
+
+  /* Intro */
+  .intro-title { font-size: 22px; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 10px; }
+  .intro-sub { font-size: 14px; color: var(--text2); line-height: 1.65; margin-bottom: 20px; }
+  .intro-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .chip {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+
+  /* Legend card */
+  .legend-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 20px;
+  }
+  .legend-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .legend-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .legend-sign {
+    font-size: 16px;
+    font-weight: 300;
+    min-width: 22px;
+    text-align: center;
+    color: var(--text);
+  }
+  .legend-desc { font-size: 11px; color: var(--text2); line-height: 1.5; }
+
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    border: 1.5px solid var(--text);
+    border-radius: var(--radius-sm);
+    background: var(--text);
+    color: var(--bg);
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  .start-btn:hover { opacity: 0.88; }
+
+  /* Results */
+  .results-title { font-size: 20px; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 4px; }
+  .results-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+
+  .metrics-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .metric-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .metric-val { font-size: 24px; font-weight: 300; letter-spacing: -0.02em; }
+  .metric-lbl { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+
+  .sei-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 20px;
+  }
+  .sei-title { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 14px; }
+
+  .nova-bar-row { margin-bottom: 12px; }
+  .nova-bar-label { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .nova-bar-name { font-size: 12px; color: var(--text2); }
+  .nova-bar-pct { font-size: 12px; font-weight: 500; }
+  .nova-bar-track { height: 6px; background: var(--bg3); border-radius: 3px; }
+  .nova-bar-fill { height: 6px; border-radius: 3px; transition: width 0.6s ease; }
+
+  .sei-formula {
+    font-size: 11px;
+    color: var(--text3);
+    background: var(--bg3);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-top: 14px;
+    font-style: italic;
+  }
+
+  .sei-interp {
+    font-size: 13px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    margin-top: 14px;
+    line-height: 1.6;
+    font-weight: 500;
+    border: 0.5px solid var(--border);
+  }
+  .sei-interp.validated { background: var(--success-bg); color: var(--success-txt); border-color: transparent; }
+  .sei-interp.partial { background: var(--amber-bg); color: var(--amber-txt); border-color: transparent; }
+  .sei-interp.weak { background: var(--bg3); color: var(--text2); }
+
+  /* Detail table */
+  .detail-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .detail-toggle {
+    width: 100%;
+    padding: 13px 18px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 13px;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .detail-toggle:hover { background: var(--bg2); }
+  .detail-tbl { display: none; }
+  .detail-tbl.visible { display: block; }
+  .detail-tbl table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .detail-tbl th {
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text3);
+    background: var(--bg2);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .detail-tbl td { padding: 9px 12px; border-bottom: 0.5px solid var(--border); }
+  .detail-tbl tr:last-child td { border-bottom: none; }
+  .abandon-yes { color: var(--red-txt); font-weight: 500; }
+  .abandon-no { color: var(--green-txt); }
+
+  .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .action-btn {
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    text-align: center;
+  }
+  .action-btn.primary { background: var(--text); color: var(--bg); border: none; }
+  .action-btn.secondary { background: var(--bg); color: var(--text); border: 0.5px solid var(--border2); }
+
+  /* Note de bas */
+  .footnote {
+    font-size: 10px;
+    color: var(--text3);
+    line-height: 1.6;
+    text-align: center;
+    padding: 0 8px;
+  }
+
+  @media (max-width: 400px) {
+    .product-name { font-size: 26px; }
+    .metrics-row { grid-template-columns: 1fr 1fr; }
+    .legend-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- LOGO -->
+  <div class="logo">
+    <span>Biodiacritique Nutritionnel · Test SEI</span>
+    <span class="inpi-badge">INPI DSO2026010264</span>
+  </div>
+
+  <!-- ─── INTRO ─────────────────────────────────────────── -->
+  <div class="screen active" id="s-intro">
+    <h1 class="intro-title">Test de perception — Scarification de l'étiquette</h1>
+    <p class="intro-sub">
+      Vous allez voir 20 noms de produits alimentaires écrits selon la nomenclature
+      <strong>Biodiacritique Nutritionnelle</strong>. Pour chaque produit, répondez à deux
+      questions simples : acheteriez-vous ce produit ? Et à quel point la typographie
+      a-t-elle retenu votre attention ?
+    </p>
+
+    <div class="intro-chips">
+      <span class="chip" style="background:var(--green-bg);color:var(--green-txt)">5 produits NOVA 1</span>
+      <span class="chip" style="background:var(--amber-bg);color:var(--amber-txt)">5 produits NOVA 2</span>
+      <span class="chip" style="background:var(--orange-bg);color:var(--orange-txt)">5 produits NOVA 3</span>
+      <span class="chip" style="background:var(--red-bg);color:var(--red-txt)">5 produits NOVA 4</span>
+    </div>
+
+    <!-- Légende des 7 signes fondateurs -->
+    <div class="legend-card">
+      <div class="legend-title">Les 7 signes — Lecture rapide</div>
+      <div class="legend-grid">
+        <div class="legend-item">
+          <span class="legend-sign">º</span>
+          <span class="legend-desc">Gonflement · Gras saturés · Rétention</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-sign">å</span>
+          <span class="legend-desc">Vacuité nutritionnelle · Calories vides</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-sign">ẹ</span>
+          <span class="legend-desc">Atrophie · Perte par extrusion</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-sign">ė</span>
+          <span class="legend-desc">Inflammation · Hypertension</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-sign">A/O/I</span>
+          <span class="legend-desc">Majuscule interne · Anomalie métabolique</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-sign">ª</span>
+          <span class="legend-desc">Ersatz · Contrainte économique</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-sign">Å</span>
+          <span class="legend-desc">Malnutrition paradoxale (majuscule)</span>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:10px;color:var(--text3)">
+        Répétition d'intensité : signe ×1 = alerte · ×2 = sévère · ×3 = critique
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="startTest()">Commencer le test →</button>
+    <p class="footnote">Durée estimée : 4–6 min · Anonyme · Données locales</p>
+  </div>
+
+  <!-- ─── TEST ──────────────────────────────────────────── -->
+  <div class="screen" id="s-test">
+    <div class="prog-wrap">
+      <div class="prog-track"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+    </div>
+    <div class="prog-label" id="step-lbl">Produit 1 / 20</div>
+
+    <div class="product-card">
+      <div class="product-top">
+        <div class="product-name" id="prod-name">—</div>
+        <div class="product-meta">
+          <span class="product-price" id="prod-price">—</span>
+          <span class="nova-badge" id="prod-badge">—</span>
+        </div>
+      </div>
+
+      <!-- Q1 -->
+      <div class="q-section" id="q1-block">
+        <div class="q-label">Question 1 / 2</div>
+        <div class="q-text">Face à ce produit en rayon, que faites-vous ?</div>
+        <div class="q-sub">Première réaction spontanée.</div>
+        <div class="choices">
+          <button class="choice-btn" onclick="selectQ1(0)">✓ Je l'achète sans hésiter</button>
+          <button class="choice-btn" onclick="selectQ1(1)">☞ Je le regarde, j'hésite peut-être</button>
+          <button class="choice-btn" onclick="selectQ1(2)">↷ J'hésite et je cherche une alternative</button>
+          <button class="choice-btn" onclick="selectQ1(3)">✕ Je ne prends pas ce produit</button>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-section" id="q2-block" style="display:none">
+        <div class="q-divider" style="margin:-18px -20px 18px"></div>
+        <div class="q-label">Question 2 / 2</div>
+        <div class="q-text">La typographie du nom a-t-elle retenu votre attention ?</div>
+        <div class="q-sub">1 = aucun effet · 5 = déformation immédiatement visible.</div>
+        <div class="scale-row">
+          <button class="scale-btn" onclick="selectScale(1)">1</button>
+          <button class="scale-btn" onclick="selectScale(2)">2</button>
+          <button class="scale-btn" onclick="selectScale(3)">3</button>
+          <button class="scale-btn" onclick="selectScale(4)">4</button>
+          <button class="scale-btn" onclick="selectScale(5)">5</button>
+        </div>
+        <div class="scale-labels"><span>Aucun effet</span><span>Maximum</span></div>
+        <div class="feedback" id="q2-feedback" style="display:none"></div>
+      </div>
+
+      <div class="next-wrap">
+        <button class="next-btn" id="next-btn" onclick="nextStep()" disabled>Produit suivant →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── RÉSULTATS ──────────────────────────────────────── -->
+  <div class="screen" id="s-results">
+    <h2 class="results-title">Résultats — SEI Biodiacritique</h2>
+    <p class="results-sub">
+      Analyse de la perception des graphies scarifiées et mesure de l'effet dose-réponse sur le comportement d'achat.
+    </p>
+
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-val" id="r-total">—</div>
+        <div class="metric-lbl">Produits évalués</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="r-abandon">—</div>
+        <div class="metric-lbl">Taux d'abandon global</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="r-perc">—</div>
+        <div class="metric-lbl">Perception moy.</div>
+      </div>
+    </div>
+
+    <!-- Graphe NOVA -->
+    <div class="sei-card">
+      <div class="sei-title">Taux d'abandon par niveau NOVA</div>
+
+      <div class="nova-bar-row">
+        <div class="nova-bar-label">
+          <span class="nova-bar-name">NOVA 1 — Graphies standard (bœuf, tomates…)</span>
+          <span class="nova-bar-pct" id="pct1">0%</span>
+        </div>
+        <div class="nova-bar-track">
+          <div class="nova-bar-fill" id="bar1" style="width:0%;background:#1b5e20"></div>
+        </div>
+      </div>
+
+      <div class="nova-bar-row">
+        <div class="nova-bar-label">
+          <span class="nova-bar-name">NOVA 2 — Signes simples (påin, frºmåge…)</span>
+          <span class="nova-bar-pct" id="pct2">0%</span>
+        </div>
+        <div class="nova-bar-track">
+          <div class="nova-bar-fill" id="bar2" style="width:0%;background:#e65100"></div>
+        </div>
+      </div>
+
+      <div class="nova-bar-row">
+        <div class="nova-bar-label">
+          <span class="nova-bar-name">NOVA 3 — Signes doublés (jªmbºn, crėvettẹ…)</span>
+          <span class="nova-bar-pct" id="pct3">0%</span>
+        </div>
+        <div class="nova-bar-track">
+          <div class="nova-bar-fill" id="bar3" style="width:0%;background:#bf360c"></div>
+        </div>
+      </div>
+
+      <div class="nova-bar-row">
+        <div class="nova-bar-label">
+          <span class="nova-bar-name">NOVA 4 — Signes triplés (sUUUcre, pizzÅ…)</span>
+          <span class="nova-bar-pct" id="pct4">0%</span>
+        </div>
+        <div class="nova-bar-track">
+          <div class="nova-bar-fill" id="bar4" style="width:0%;background:#880e4f"></div>
+        </div>
+      </div>
+
+      <div class="sei-formula">
+        Formule SEI (Scarification Efficacy Index) :
+        <strong>SEI = (taux abandon scarifié / taux abandon standard) − 1</strong>
+        <br>Un SEI de 0,35 signifie que la scarification a augmenté le taux d'abandon de 35 %
+        par rapport à la baseline NOVA 1.
+      </div>
+
+      <div class="metric-card" style="margin-top:14px;background:var(--bg2)">
+        <div class="metric-val" id="r-sei">—</div>
+        <div class="metric-lbl">SEI estimé (NOVA 4 vs NOVA 1)</div>
+      </div>
+
+      <div class="sei-interp" id="sei-interp"></div>
+    </div>
+
+    <!-- Détail produit par produit -->
+    <div class="detail-card">
+      <button class="detail-toggle" onclick="toggleDetail()">Voir le détail produit par produit ↓</button>
+      <div class="detail-tbl" id="detail-tbl">
+        <table>
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Niveau</th>
+              <th>Perception</th>
+              <th>Décision</th>
+            </tr>
+          </thead>
+          <tbody id="detail-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="action-btn primary" onclick="exportCSV()">Exporter CSV</button>
+      <button class="action-btn secondary" onclick="restartTest()">Refaire le test</button>
+    </div>
+
+    <p class="footnote">
+      Indicateur comportemental, non médical. Résultats valides sur ≥ 30 participants.
+      © Siewe Mingueu Francis Brice · Parme, 2026
+    </p>
+  </div>
+</div>
+
+<script>
+// ─── CORPUS OFFICIEL Biodiacritique Nutritionnel ──────────────────────────────
+// Graphies conformes au document 01_Biodiacritique_Nutritionnel_Nomenclature_Corpus
+// Principe de répétition d'intensité : ×1 alerte · ×2 sévère · ×3 critique
+
+const PRODUCTS = [
+  // ── NOVA 1 — Graphies ordinaires (produits bruts de qualité)
+  { name: "bœuf",         label: "Viande de pâturage",       price: "3,80 €/kg",         nova: 1 },
+  { name: "œufs",         label: "Œufs plein air (code 0)",  price: "3,20 €/6",           nova: 1 },
+  { name: "tomates",      label: "Tomates fraîches",         price: "2,10 €/kg",          nova: 1 },
+  { name: "noix",         label: "Noix entières",            price: "3,50 €/250g",        nova: 1 },
+  { name: "lentilles",    label: "Lentilles vertes",         price: "1,20 €/500g",        nova: 1 },
+
+  // ── NOVA 2 — Signes simples (transformation minimale)
+  { name: "påin",         label: "Pain blanc (vide nutritionnel)", price: "1,40 €",       nova: 2 },
+  { name: "frºmåge",      label: "Fromage artisanal équilibré",    price: "4,20 €/200g",  nova: 2 },
+  { name: "pizzå",        label: "Pizza fraîche base légumière",   price: "3,90 €",       nova: 2 },
+  { name: "sUcre",        label: "Sucre standard",                 price: "0,90 €/500g",  nova: 2 },
+  { name: "cerealẹs",     label: "Céréales extrudées",             price: "2,90 €/boîte", nova: 2 },
+
+  // ── NOVA 3 — Signes doublés (anomalie sévère)
+  { name: "jªmbºn",       label: "Jambon premier prix",       price: "2,20 €/4 tr.",      nova: 3 },
+  { name: "crėvettẹ",     label: "Crevettes traitées sulfites",price: "3,80 €/200g",      nova: 3 },
+  { name: "sUUcre",       label: "Produit à fort IG",         price: "1,80 €",            nova: 3 },
+  { name: "pOUlet",       label: "Nuggets / préparation reconstituée", price: "3,80 €/boîte", nova: 3 },
+  { name: "frºmAge",      label: "Fromage industriel ultra-transformé", price: "1,60 €",  nova: 3 },
+
+  // ── NOVA 4 — Signes triplés (anomalie critique)
+  { name: "sUUUcre",      label: "Soda / confiserie IG explosif", price: "1,20 €/33cl",   nova: 4 },
+  { name: "hAmburgEr",    label: "Hamburger hypernatrémique",   price: "4,20 €",          nova: 4 },
+  { name: "chºcºlåt",     label: "Chocolat industriel pauvre en cacao", price: "0,90 €", nova: 4 },
+  { name: "pizzÅ",        label: "Pizza surgelée (malnutrition paradoxale)", price: "3,40 €", nova: 4 },
+  { name: "sºdå",         label: "Boisson gazeuse — volume sans substance", price: "1,20 €/33cl", nova: 4 },
+];
+
+const NOVA_COLORS = {
+  1: { bg: "#e8f5e9", txt: "#1b5e20",  label: "NOVA 1" },
+  2: { bg: "#fff8e1", txt: "#e65100",  label: "NOVA 2" },
+  3: { bg: "#fff3e0", txt: "#bf360c",  label: "NOVA 3" },
+  4: { bg: "#fce4ec", txt: "#880e4f",  label: "NOVA 4" },
+};
+
+const PERCEPTION_LABELS = [
+  "Signal non détecté — graphie perçue comme ordinaire.",
+  "Légère anomalie perçue — attention faible.",
+  "Signal modéré — anomalie identifiée.",
+  "Signal fort — la typographie a retenu l'attention.",
+  "Signal maximal — déformation immédiatement visible.",
+];
+
+// ─── État de la session ───────────────────────────────────────────────────────
+let order = [], idx = 0, results = [], q1ans = null, q2ans = null;
+
+// ─── Utilitaires ─────────────────────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ─── Déroulement du test ──────────────────────────────────────────────────────
+function startTest() {
+  order = shuffle([...Array(20).keys()]);
+  idx = 0; results = [];
+  show('s-test');
+  loadProduct();
+}
+
+function loadProduct() {
+  const p = PRODUCTS[order[idx]];
+  const c = NOVA_COLORS[p.nova];
+  const pct = Math.round(idx / 20 * 100);
+
+  document.getElementById('prog').style.width = pct + '%';
+  document.getElementById('step-lbl').textContent = 'Produit ' + (idx + 1) + ' / 20';
+  document.getElementById('prod-name').textContent = p.name;
+  document.getElementById('prod-price').textContent = p.label + ' — ' + p.price;
+
+  const badge = document.getElementById('prod-badge');
+  badge.textContent = c.label;
+  badge.style.background = c.bg;
+  badge.style.color = c.txt;
+
+  q1ans = null; q2ans = null;
+  document.getElementById('q1-block').style.display = 'block';
+  document.getElementById('q2-block').style.display = 'none';
+  document.getElementById('q2-feedback').style.display = 'none';
+  document.getElementById('next-btn').disabled = true;
+  document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+}
+
+function selectQ1(v) {
+  q1ans = v;
+  document.querySelectorAll('.choice-btn').forEach((b, i) => b.classList.toggle('selected', i === v));
+  setTimeout(() => {
+    document.getElementById('q1-block').style.display = 'none';
+    document.getElementById('q2-block').style.display = 'block';
+  }, 180);
+}
+
+function selectScale(v) {
+  q2ans = v;
+  document.querySelectorAll('.scale-btn').forEach((b, i) => b.classList.toggle('selected', i + 1 === v));
+  const fb = document.getElementById('q2-feedback');
+  fb.textContent = PERCEPTION_LABELS[v - 1];
+  fb.className = 'feedback ' + (v >= 4 ? 'good' : 'info');
+  fb.style.display = 'block';
+  document.getElementById('next-btn').disabled = false;
+}
+
+function nextStep() {
+  const p = PRODUCTS[order[idx]];
+  results.push({
+    idx: order[idx],
+    name: p.name,
+    label: p.label,
+    nova: p.nova,
+    abandon: q1ans >= 2 ? 1 : 0,   // ≥ 2 = hésitation ou refus → abandon
+    q1: q1ans,
+    perception: q2ans || 3,
+  });
+  idx++;
+  if (idx >= 20) { showResults(); } else { loadProduct(); }
+}
+
+// ─── Résultats & SEI ──────────────────────────────────────────────────────────
+function showResults() {
+  document.getElementById('prog').style.width = '100%';
+  show('s-results');
+
+  const total = results.length;
+  const totalAbandon = results.filter(r => r.abandon).length;
+  const avgPerc = (results.reduce((s, r) => s + r.perception, 0) / total).toFixed(1);
+
+  document.getElementById('r-total').textContent = total;
+  document.getElementById('r-abandon').textContent = Math.round(totalAbandon / total * 100) + '%';
+  document.getElementById('r-perc').textContent = avgPerc + ' / 5';
+
+  const byNova = [1, 2, 3, 4].map(n => {
+    const g = results.filter(r => r.nova === n);
+    if (!g.length) return { n, rate: 0, count: 0 };
+    return { n, rate: Math.round(g.filter(r => r.abandon).length / g.length * 100), count: g.length };
+  });
+
+  byNova.forEach(d => {
+    document.getElementById('bar' + d.n).style.width = d.rate + '%';
+    document.getElementById('pct' + d.n).textContent = d.rate + '%';
+  });
+
+  // ── Formule SEI officielle (plan SaaS §"Scarification Efficacy Index") ──────
+  // SEI = (taux abandon scarifié / taux abandon standard) − 1
+  // Baseline = NOVA 1 (standard) ; Traitement = NOVA 4 (scarifié max)
+  const baseRate = byNova[0].rate;   // NOVA 1 = taux standard
+  const topRate  = byNova[3].rate;   // NOVA 4 = taux scarifié
+
+  let sei = 0;
+  if (baseRate > 0) {
+    sei = (topRate / baseRate) - 1;
+  } else if (topRate > 0) {
+    sei = topRate / 100; // si baseline = 0, on prend le taux brut NOVA4
+  }
+  sei = Math.max(0, sei);
+
+  const seiDisplay = sei.toFixed(2);
+  document.getElementById('r-sei').textContent = seiDisplay;
+
+  const interp = document.getElementById('sei-interp');
+  const seiNum = parseFloat(seiDisplay);
+
+  if (seiNum >= 0.35) {
+    interp.className = 'sei-interp validated';
+    interp.textContent = 'SEI = ' + seiDisplay +
+      ' — Seuil de validation commerciale atteint (≥ 0,35). '
+      + 'La scarification NOVA 4 génère un abandon ' + Math.round(seiNum * 100) +
+      '% plus élevé que la baseline NOVA 1. Hypothèse H1 (effet dose-réponse) confirmée.';
+  } else if (seiNum >= 0.10) {
+    interp.className = 'sei-interp partial';
+    interp.textContent = 'SEI = ' + seiDisplay +
+      ' — Signal présent (+ ' + Math.round(seiNum * 100) +
+      '% vs baseline). En dessous du seuil de validation (0,35). '
+      + 'Augmentez l\'échantillon (≥ 30 participants) pour confirmer.';
+  } else {
+    interp.className = 'sei-interp weak';
+    interp.textContent = 'SEI = ' + seiDisplay +
+      ' — Signal faible. Possible biais de familiarité ou rendu insuffisant des diacritiques sur cet écran.';
+  }
+
+  buildDetailTable();
+}
+
+function buildDetailTable() {
+  const body = document.getElementById('detail-body');
+  const sorted = [...results].sort((a, b) => a.nova - b.nova || a.idx - b.idx);
+  body.innerHTML = sorted.map(r => `
+    <tr>
+      <td>${r.name}</td>
+      <td><span style="font-size:10px;font-weight:500;padding:2px 6px;border-radius:8px;
+        background:${NOVA_COLORS[r.nova].bg};color:${NOVA_COLORS[r.nova].txt}">
+        NOVA ${r.nova}</span></td>
+      <td>${r.perception}/5</td>
+      <td class="${r.abandon ? 'abandon-yes' : 'abandon-no'}">${r.abandon ? 'Évité' : 'Acheté'}</td>
+    </tr>
+  `).join('');
+}
+
+function toggleDetail() {
+  const tbl = document.getElementById('detail-tbl');
+  const btn = document.querySelector('.detail-toggle');
+  const visible = tbl.classList.toggle('visible');
+  btn.textContent = visible ? 'Masquer le détail ↑' : 'Voir le détail produit par produit ↓';
+}
+
+// ─── Export CSV ───────────────────────────────────────────────────────────────
+function exportCSV() {
+  const ts = new Date().toISOString().slice(0, 16).replace('T', '_').replace(':', '-');
+  const q1Labels = [
+    'Achète sans hésitation',
+    'Regarde, hésite',
+    'Cherche une alternative',
+    'Ne prend pas le produit'
+  ];
+
+  const rows = [
+    'Produit,Catégorie NOVA,Diagnostic,Q1_choix,Abandon,Perception/5',
+  ];
+  results.forEach(r => {
+    const p = PRODUCTS[r.idx];
+    rows.push(`"${r.name}",NOVA ${r.nova},"${p.label}","${q1Labels[r.q1]}",${r.abandon ? 'oui' : 'non'},${r.perception}`);
+  });
+
+  rows.push('');
+  rows.push('── Synthèse SEI par niveau NOVA ──');
+
+  const byNova = [1, 2, 3, 4].map(n => {
+    const g = results.filter(r => r.nova === n);
+    if (!g.length) return null;
+    const rate = Math.round(g.filter(r => r.abandon).length / g.length * 100);
+    return { n, rate, count: g.length };
+  }).filter(Boolean);
+
+  byNova.forEach(d => {
+    rows.push(`NOVA ${d.n},Taux d'abandon,${d.rate}%,n=${d.count}`);
+  });
+
+  rows.push('');
+  const b = byNova.find(d => d.n === 1);
+  const t = byNova.find(d => d.n === 4);
+  if (b && t) {
+    let sei = b.rate > 0 ? ((t.rate / b.rate) - 1) : (t.rate / 100);
+    sei = Math.max(0, sei);
+    rows.push(`SEI (NOVA4 / NOVA1) − 1,${sei.toFixed(3)}`);
+    rows.push(`Formule,SEI = (taux abandon scarifié / taux abandon standard) − 1`);
+    rows.push(`Baseline NOVA1,${b.rate}%`);
+    rows.push(`Traitement NOVA4,${t.rate}%`);
+  }
+
+  rows.push('');
+  rows.push(`Session,${new Date().toLocaleString('fr-FR')}`);
+  rows.push(`Propriété intellectuelle,INPI DSO2026010264`);
+  rows.push(`Auteur,Siewe Mingueu Francis Brice`);
+
+  const blob = new Blob(['\ufeff' + rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'SEI_biodiacritique_' + ts + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function restartTest() { show('s-intro'); }
+</script>
+</body>
+</html>
