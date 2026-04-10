@@ -1,144 +1,44 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test SEI — Biodiacritique Nutritionnel</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <title>Test Biodiacritique</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #f4f4f4; padding: 20px; }
+        .card { background: white; max-width: 500px; margin: auto; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        img { width: 100%; border-radius: 10px; height: 300px; object-fit: cover; background: #ddd; }
+        button { width: 100%; padding: 15px; margin-top: 10px; cursor: pointer; border: none; border-radius: 8px; background: #000; color: #fff; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div id="app" class="card">
+        <h1>Test Biodiacritique</h1>
+        <p>Prêt à commencer ?</p>
+        <button onclick="start()">Démarrer</button>
+    </div>
 
-  :root {
-    --bg: #ffffff;
-    --bg2: #f7f7f5;
-    --bg3: #f0f0ee;
-    --text: #111110;
-    --text2: #6b6b68;
-    --text3: #9b9b98;
-    --border: rgba(0,0,0,0.10);
-    --border2: rgba(0,0,0,0.18);
-    --green-bg: #e8f5e9;
-    --green-txt: #1b5e20;
-    --amber-bg: #fff8e1;
-    --amber-txt: #e65100;
-    --orange-bg: #fff3e0;
-    --orange-txt: #bf360c;
-    --red-bg: #fce4ec;
-    --red-txt: #880e4f;
-    --success-bg: #e8f5e9;
-    --success-txt: #1b5e20;
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
+    <script>
+        const photos = [
+            "nova1_carottes.jpg", "nova1_lentilles.jpg", "nova1_noix.jpg", "nova1_pomme.jpg", "nova1_tomates.jpg",
+            "nova2_compote.jpg", "nova2_fromage.jpg", "nova2_pain.jpg", "nova2_pasta.jpg", "nova2_yaourt.jpg",
+            "nova3_biscuit.jpg", "nova3_cereales.jpg", "nova3_jambon.jpg", "nova3_nuggets.jpg", "nova3_soupe.jpg",
+            "nova4_barre.jpg", "nova4_chips.jpg", "nova4_hamburger.jpg", "nova4_pizza.jpg", "nova4_soda.jpg"
+        ];
+        let i = 0;
 
-  body {
-    font-family: 'DM Sans', system-ui, sans-serif;
-    background: var(--bg2);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 24px 16px 48px;
-  }
-
-  .container { width: 100%; max-width: 520px; }
-
-  .logo {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text3);
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 0.5px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .inpi-badge {
-    font-size: 9px;
-    letter-spacing: 0.04em;
-    background: var(--bg3);
-    padding: 2px 7px;
-    border-radius: 6px;
-    color: var(--text3);
-  }
-
-  .screen { display: none; }
-  .screen.active { display: block; }
-
-  /* Progress */
-  .prog-wrap { margin-bottom: 6px; }
-  .prog-track { height: 2px; background: var(--border); border-radius: 2px; }
-  .prog-fill { height: 2px; background: var(--text); border-radius: 2px; transition: width 0.4s ease; }
-  .prog-label { font-size: 11px; color: var(--text3); margin-top: 6px; margin-bottom: 20px; }
-
-  /* Product card */
-  .product-card {
-    background: var(--bg);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    margin-bottom: 20px;
-  }
-  
-  .product-image-container {
-    width: 100%;
-    height: 250px;
-    background: #eee;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border-bottom: 0.5px solid var(--border);
-  }
-  
-  .product-image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .product-top {
-    background: var(--bg2);
-    padding: 20px 20px 16px;
-    border-bottom: 0.5px solid var(--border);
-  }
-  .product-name {
-    font-size: 32px;
-    font-weight: 300;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-  .product-meta { display: flex; gap: 10px; align-items: center; }
-  .product-price { font-size: 13px; color: var(--text2); }
-  .nova-badge {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 2px 7px;
-    border-radius: 10px;
-  }
-
-  /* Questions */
-  .q-section { padding: 18px 20px; }
-  .q-label {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 8px;
-  }
-  .q-text {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.4;
-    margin-bottom: 4px;
-  }
-  .
+        function start() { load(); }
+        function load() {
+            if(i >= photos.length) {
+                document.getElementById('app').innerHTML = "<h1>Terminé !</h1><p>Merci de votre participation.</p>";
+                return;
+            }
+            document.getElementById('app').innerHTML = `
+                <img src="${photos[i]}" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Non+Trouvée'">
+                <h2>Produit ${i+1}/20</h2>
+                <button onclick="next()">Suivant</button>
+            `;
+        }
+        function next() { i++; load(); }
+    </script>
+</body>
+</html>
