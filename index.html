@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biodiacritique Nutritionnelle — Test SEI</title>
+    <title>Biodiacritique — Test SEI</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #ffffff; --bg2: #f8f8f7; --text: #111110; --text2: #6b6b68; --border: rgba(0,0,0,0.08); --radius: 16px; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'DM Sans', sans-serif; background: var(--bg2); color: var(--text); display: flex; justify-content: center; padding: 20px; min-height: 100vh; }
         .container { width: 100%; max-width: 480px; }
-        .header { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); margin-bottom: 30px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .header { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 10px; display: flex; justify-content: space-between; }
         .card { background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
         .img-container { width: 100%; height: 320px; background: #eee; }
         .img-container img { width: 100%; height: 100%; object-fit: cover; }
@@ -22,6 +22,7 @@
         .choice-btn.selected { border: 2px solid var(--text); background: #f0f0f0; font-weight: 500; }
         .main-btn { width: 100%; padding: 18px; background: var(--text); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 500; cursor: pointer; margin-top: 20px; }
         .main-btn:disabled { opacity: 0.2; }
+        .export-btn { width: 100%; padding: 14px; background: #27ae60; color: white; border: none; border-radius: 12px; font-size: 14px; cursor: pointer; margin-top: 10px; }
         .screen { display: none; }
         .active { display: block; }
     </style>
@@ -29,16 +30,18 @@
 <body>
 <div class="container">
     <div class="header"><span>Protocole Biodiacritique</span><span>ID: DSO202601</span></div>
+    
     <div class="screen active" id="intro">
         <h1 style="font-size: 28px; font-weight: 400; margin-bottom: 15px;">Étude de Perception</h1>
-        <p style="color: var(--text2); line-height: 1.6; margin-bottom: 30px;">Évaluation de la perception des produits alimentaires (20 tests).</p>
-        <button class="main-btn" onclick="startTest()">Démarrer l'étude</button>
+        <p style="color: var(--text2); line-height: 1.6; margin-bottom: 30px;">Merci de participer à cette étude de 19 produits.</p>
+        <button class="main-btn" onclick="startTest()">Démarrer le test</button>
     </div>
+
     <div class="screen" id="test">
         <div class="card">
             <div class="img-container"><img id="p-img" src="" alt=""></div>
             <div class="content">
-                <div class="label-tiny" id="progression">Produit 1 / 20</div>
+                <div class="label-tiny" id="progression">Produit 1 / 19</div>
                 <div class="product-name" id="p-name">...</div>
                 <button class="choice-btn" id="btn-oui" onclick="select(0)" style="margin-bottom:10px;">✓ Oui, j'achète</button>
                 <button class="choice-btn" id="btn-non" onclick="select(1)">✕ Non, j'évite</button>
@@ -46,45 +49,39 @@
             </div>
         </div>
     </div>
+
     <div class="screen" id="results">
-        <h1 style="font-size: 24px; font-weight: 400;">Résultats de l'indice SEI</h1>
+        <h1 style="font-size: 24px; font-weight: 400;">Test terminé</h1>
         <div class="card" style="margin-top: 20px; padding: 24px; text-align:center;">
-            <div style="font-size: 64px; font-weight:300;" id="sei-val">0.00</div>
-            <p style="font-size: 12px; color: var(--text2); margin-top:10px;">Indice de Scarification Éthique calculé.</p>
+            <div class="label-tiny">Indice SEI calculé</div>
+            <div style="font-size: 64px; font-weight:300; margin:10px 0;" id="sei-val">0.00</div>
+            <p style="font-size: 13px; color: var(--text2);">Veuillez exporter vos résultats ci-dessous et les envoyer à l'administrateur.</p>
         </div>
-        <button class="main-btn" onclick="location.reload()">Recommencer</button>
+        <button class="export-btn" onclick="exportData()">⬇ Télécharger mes résultats (CSV)</button>
+        <button class="main-btn" onclick="location.reload()" style="background:#555">Recommencer</button>
     </div>
 </div>
+
 <script>
+    // Liste sans le SODA (19 produits)
     const DATA = [
-        // NOVA 1 (Naturels)
-        { name: "carottẹs", n: 1, img: "nova1_carottes.jpg" },
-        { name: "pommẹ", n: 1, img: "nova1_pomme.jpg" },
-        { name: "lentillẹs", n: 1, img: "nova1_lentilles.jpg" },
-        { name: "noix", n: 1, img: "nova1_noix.jpg" },
+        { name: "carottẹs", n: 1, img: "nova1_carottes.jpg" }, { name: "pommẹ", n: 1, img: "nova1_pomme.jpg" },
+        { name: "lentillẹs", n: 1, img: "nova1_lentilles.jpg" }, { name: "noix", n: 1, img: "nova1_noix.jpg" },
         { name: "tomåtẹs", n: 1, img: "nova1_tomates.jpg" },
-        // NOVA 2 (Transformés culinaires)
-        { name: "påin", n: 2, img: "nova2_pain.jpg" },
-        { name: "yåourt", n: 2, img: "nova2_yaourt.jpg" },
-        { name: "frºmåge", n: 2, img: "nova2_fromage.jpg" },
-        { name: "påstå", n: 2, img: "nova2_pasta.jpg" },
+        { name: "påin", n: 2, img: "nova2_pain.jpg" }, { name: "yåourt", n: 2, img: "nova2_yaourt.jpg" },
+        { name: "frºmåge", n: 2, img: "nova2_fromage.jpg" }, { name: "påstå", n: 2, img: "nova2_pasta.jpg" },
         { name: "cºmpºte", n: 2, img: "nova2_compote.jpg" },
-        // NOVA 3 (Transformés)
-        { name: "jªmbºn", n: 3, img: "nova3_jambon.jpg" },
-        { name: "sºupẹ", n: 3, img: "nova3_soupe.jpg" },
-        { name: "biscuit", n: 3, img: "nova3_biscuit.jpg" },
-        { name: "nuggẹts", n: 3, img: "nova3_nuggets.jpg" },
+        { name: "jªmbºn", n: 3, img: "nova3_jambon.jpg" }, { name: "sºupẹ", n: 3, img: "nova3_soupe.jpg" },
+        { name: "biscuit", n: 3, img: "nova3_biscuit.jpg" }, { name: "nuggẹts", n: 3, img: "nova3_nuggets.jpg" },
         { name: "céréalẹs", n: 3, img: "nova3_cereales.jpg" },
-        // NOVA 4 (Ultra-transformés)
-        { name: "sºdå", n: 4, img: "nova4_soda.jpg" },
-        { name: "hAmburgEr", n: 4, img: "nova4_hamburger.jpg" },
-        { name: "chºcºlåt", n: 4, img: "nova4_barre.jpg" },
-        { name: "pizzÅ", n: 4, img: "nova4_pizza.jpg" },
-        { name: "chïps", n: 4, img: "nova4_chips.jpg" }
+        { name: "hAmburgEr", n: 4, img: "nova4_hamburger.jpg" }, { name: "chºcºlåt", n: 4, img: "nova4_barre.jpg" },
+        { name: "pizzÅ", n: 4, img: "nova4_pizza.jpg" }, { name: "chïps", n: 4, img: "nova4_chips.jpg" }
     ];
 
     let currentIdx = 0, results = [], selectedValue = null;
+
     function startTest() { document.getElementById('intro').classList.remove('active'); document.getElementById('test').classList.add('active'); loadProduct(); }
+    
     function loadProduct() {
         const p = DATA[currentIdx];
         document.getElementById('p-img').src = p.img;
@@ -94,17 +91,20 @@
         document.getElementById('next-btn').disabled = true;
         document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
     }
+
     function select(v) {
         selectedValue = v;
         document.getElementById('btn-oui').classList.toggle('selected', v === 0);
         document.getElementById('btn-non').classList.toggle('selected', v === 1);
         document.getElementById('next-btn').disabled = false;
     }
+
     function nextStep() {
-        results.push({ nova: DATA[currentIdx].n, abandon: selectedValue });
+        results.push({ produit: DATA[currentIdx].name, nova: DATA[currentIdx].n, abandon: selectedValue });
         currentIdx++;
         if (currentIdx < DATA.length) loadProduct(); else showResults();
     }
+
     function showResults() {
         document.getElementById('test').classList.remove('active');
         document.getElementById('results').classList.add('active');
@@ -113,6 +113,20 @@
         const r1 = (n1.filter(r => r.abandon === 1).length / n1.length) * 100 || 0;
         const r4 = (n4.filter(r => r.abandon === 1).length / n4.length) * 100 || 0;
         document.getElementById('sei-val').textContent = ((r4 - r1)/100).toFixed(2);
+    }
+
+    function exportData() {
+        let csv = "Produit,Niveau_NOVA,Decision(0=Oui_1=Non)\n";
+        results.forEach(r => { csv += `${r.produit},${r.nova},${r.abandon}\n`; });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', 'resultats_biodiacritique.csv');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
 </script>
 </body>
