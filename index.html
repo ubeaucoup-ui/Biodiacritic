@@ -18,58 +18,58 @@
         .label-tiny { font-size: 10px; color: var(--text2); text-transform: uppercase; margin-bottom: 8px; }
         .product-name { font-size: 32px; font-weight: 300; margin-bottom: 24px; letter-spacing: -0.5px; }
         .btn-group { display: grid; gap: 10px; }
-        .choice-btn { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: white; cursor: pointer; text-align: left; font-size: 15px; transition: all 0.2s; }
+        .choice-btn { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: white; cursor: pointer; text-align: left; font-size: 15px; }
         .choice-btn.selected { border: 2px solid var(--text); background: #f0f0f0; font-weight: 500; }
         .main-btn { width: 100%; padding: 18px; background: var(--text); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 500; cursor: pointer; margin-top: 20px; }
-        .main-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+        .main-btn:disabled { opacity: 0.2; }
         .screen { display: none; }
         .active { display: block; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="header"><span>Test SEI</span><span>ID: DSO202601</span></div>
+    <div class="header"><span>Protocole Biodiacritique</span><span>ID: DSO202601</span></div>
     <div class="screen active" id="intro">
-        <h1 style="font-size: 28px; font-weight: 400; margin-bottom: 15px;">Protocole Biodiacritique</h1>
-        <p style="color: var(--text2); line-height: 1.6; margin-bottom: 30px;">Analyse de l'impact des graphies scarifiées sur la décision d'achat.</p>
-        <button class="main-btn" onclick="startTest()">Commencer l'étude</button>
+        <h1 style="font-size: 28px; font-weight: 400; margin-bottom: 15px;">Étude de Perception</h1>
+        <p style="color: var(--text2); line-height: 1.6; margin-bottom: 30px;">Évaluation de 20 produits alimentaires scarifiés.</p>
+        <button class="main-btn" onclick="startTest()">Démarrer le test</button>
     </div>
     <div class="screen" id="test">
         <div class="card">
             <div class="img-container"><img id="p-img" src="" alt=""></div>
             <div class="content">
-                <div class="label-tiny">Nomenclature officielle</div>
-                <div class="product-name" id="p-name">Chargement...</div>
+                <div class="label-tiny" id="progression">Produit 1 / 20</div>
+                <div class="product-name" id="p-name">...</div>
                 <div class="btn-group">
-                    <button class="choice-btn" id="btn-oui" onclick="select(0)">✓ Oui, j'achète ce produit</button>
-                    <button class="choice-btn" id="btn-non" onclick="select(1)">✕ Non, je n'achète pas</button>
+                    <button class="choice-btn" id="btn-oui" onclick="select(0)">✓ Oui, j'achète</button>
+                    <button class="choice-btn" id="btn-non" onclick="select(1)">✕ Non, j'évite</button>
                 </div>
-                <button class="main-btn" id="next-btn" onclick="nextStep()" disabled>Produit suivant</button>
+                <button class="main-btn" id="next-btn" onclick="nextStep()" disabled>Suivant</button>
             </div>
         </div>
     </div>
     <div class="screen" id="results">
-        <h1 style="font-size: 24px; font-weight: 400;">Analyse des données</h1>
+        <h1 style="font-size: 24px; font-weight: 400;">Résultats de l'indice SEI</h1>
         <div class="card" style="margin-top: 20px; padding: 24px; text-align:center;">
-            <div class="label-tiny">Indice de Scarification Éthique (SEI)</div>
-            <div style="font-size: 64px; margin: 10px 0; font-weight:300;" id="sei-val">0.00</div>
-            <p style="font-size: 13px; color: var(--text2);">Test complété avec succès.</p>
+            <div style="font-size: 64px; font-weight:300;" id="sei-val">0.00</div>
+            <p style="font-size: 12px; color: var(--text2); margin-top:10px;">Indice de Scarification Éthique calculé.</p>
         </div>
-        <button class="main-btn" onclick="location.reload()">Réinitialiser le test</button>
+        <button class="main-btn" onclick="location.reload()">Recommencer</button>
     </div>
 </div>
 <script>
     const DATA = [
-        { name: "carottẹs", n: 1, img: "nova1_carottes.jpg" },
-        { name: "pommẹ", n: 1, img: "nova1_pomme.jpg" },
-        { name: "lentillẹs", n: 1, img: "nova1_lentilles.jpg" },
-        { name: "noix", n: 1, img: "nova1_noix.jpg" },
-        { name: "tomåtẹs", n: 1, img: "nova1_tomates.jpg" },
-        { name: "påin", n: 2, img: "nova2_pain.jpg" },
-        { name: "yåourt", n: 2, img: "nova2_yaourt.jpg" },
-        { name: "frºmåge", n: 2, img: "nova2_fromage.jpg" },
-        { name: "pizzÅ", n: 4, img: "nova4_pizza.jpg" },
-        { name: "chïps", n: 4, img: "nova4_chips.jpg" }
+        { name: "carottẹs", n: 1, img: "nova1_carottes.jpg" }, { name: "pommẹ", n: 1, img: "nova1_pomme.jpg" },
+        { name: "lentillẹs", n: 1, img: "nova1_lentilles.jpg" }, { name: "noix", n: 1, img: "nova1_noix.jpg" },
+        { name: "tomåtẹs", n: 1, img: "nova1_tomates.jpg" }, { name: "œufs", n: 1, img: "nova1_oeuf.jpg" },
+        { name: "påin", n: 2, img: "nova2_pain.jpg" }, { name: "yåourt", n: 2, img: "nova2_yaourt.jpg" },
+        { name: "frºmåge", n: 2, img: "nova2_fromage.jpg" }, { name: "pizzå", n: 2, img: "nova2_pasta.jpg" },
+        { name: "cerealẹs", n: 2, img: "nova2_compote.jpg" }, { name: "jªmbºn", n: 3, img: "nova3_jambon.jpg" },
+        { name: "crėvettẹ", n: 3, img: "nova3_soupe.jpg" }, { name: "sUUcre", n: 3, img: "nova3_biscuit.jpg" },
+        { name: "pOUlet", n: 3, img: "nova3_nuggets.jpg" }, { name: "frºmAge", n: 3, img: "nova3_cereales.jpg" },
+        { name: "sUUUcre", n: 4, img: "nova4_soda.jpg" }, { name: "hAmburgEr", n: 4, img: "nova4_hamburger.jpg" },
+        { name: "chºcºlåt", n: 4, img: "nova4_barre.jpg" }, { name: "pizzÅ", n: 4, img: "nova4_pizza.jpg" },
+        { name: "sºdå", n: 4, img: "nova4_chips.jpg" }
     ];
     let currentIdx = 0, results = [], selectedValue = null;
     function startTest() { document.getElementById('intro').classList.remove('active'); document.getElementById('test').classList.add('active'); loadProduct(); }
@@ -77,6 +77,7 @@
         const p = DATA[currentIdx];
         document.getElementById('p-img').src = p.img;
         document.getElementById('p-name').textContent = p.name;
+        document.getElementById('progression').textContent = `Produit ${currentIdx + 1} / ${DATA.length}`;
         selectedValue = null;
         document.getElementById('next-btn').disabled = true;
         document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
