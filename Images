@@ -1,1 +1,113 @@
-Images/vide.txt
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test SEI — Biodiacritique Nutritionnel</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --bg: #ffffff; --bg2: #f7f7f5; --text: #111110; --text2: #6b6b68; --border: rgba(0,0,0,0.10); --radius: 12px; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg2); color: var(--text); display: flex; justify-content: center; padding: 20px; }
+  .container { width: 100%; max-width: 500px; }
+  .product-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; text-align: center;}
+  .product-image-container { width: 100%; height: 300px; background: #eee; }
+  .product-image-container img { width: 100%; height: 100%; object-fit: cover; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .btn { width: 100%; padding: 15px; background: #111; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 10px;}
+  .choice-btn { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #ddd; background: #fff; cursor: pointer; border-radius: 6px; }
+  .choice-btn.selected { border: 2px solid #111; background: #f0f0f0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="screen active" id="s-intro">
+    <h1>Test Biodiacritique</h1>
+    <p>Évaluation de la perception des produits scarifiés.</p>
+    <button class="btn" onclick="startTest()">Démarrer le test</button>
+  </div>
+
+  <div class="screen" id="s-test">
+    <div class="product-card">
+      <div class="product-image-container">
+        <img id="prod-img" src="" alt="Photo du produit">
+      </div>
+      <h2 id="prod-name" style="padding:15px 0;">—</h2>
+      <div style="padding: 0 20px 20px;">
+        <p>Acheteriez-vous ce produit ?</p>
+        <button class="choice-btn" onclick="selectQ1(0)">Oui</button>
+        <button class="choice-btn" onclick="selectQ1(1)">Non</button>
+        <button class="btn" id="next-btn" onclick="nextStep()" disabled>Suivant →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s-results">
+    <h2>Test terminé</h2>
+    <div id="res-msg" style="padding: 20px 0;"></div>
+    <button class="btn" onclick="location.reload()">Refaire</button>
+  </div>
+</div>
+
+<script>
+// LISTE DES IMAGES (On enlève "Images/" pour chercher à la racine)
+const PRODUCTS = [
+  { name: "bœuf", img: "nova1_pomme.jpg" }, 
+  { name: "œufs", img: "nova1_oeuf.jpg" },
+  { name: "tomates", img: "nova1_tomates.jpg" },
+  { name: "noix", img: "nova1_noix.jpg" },
+  { name: "lentilles", img: "nova1_lentilles.jpg" },
+  { name: "påin", img: "nova2_pain.jpg" },
+  { name: "frºmåge", img: "nova2_fromage.jpg" },
+  { name: "pizzå", img: "nova2_pasta.jpg" },
+  { name: "sUcre", img: "nova2_yaourt.jpg" },
+  { name: "cerealẹs", img: "nova2_compote.jpg" },
+  { name: "jªmbºn", img: "nova3_jambon.jpg" },
+  { name: "crėvettẹ", img: "nova3_soupe.jpg" },
+  { name: "sUUcre", img: "nova3_biscuit.jpg" },
+  { name: "pOUlet", img: "nova3_nuggets.jpg" },
+  { name: "frºmAge", img: "nova3_cereales.jpg" },
+  { name: "sUUUcre", img: "nova4_soda.jpg" },
+  { name: "hAmburgEr", img: "nova4_hamburger.jpg" },
+  { name: "chºcºlåt", img: "nova4_barre.jpg" },
+  { name: "pizzÅ", img: "nova4_pizza.jpg" },
+  { name: "sºdå", img: "nova4_chips.jpg" }
+];
+
+let order = [], idx = 0, score = 0;
+
+function startTest() {
+  order = [...Array(PRODUCTS.length).keys()].sort(() => Math.random() - 0.5);
+  document.getElementById('s-intro').classList.remove('active');
+  document.getElementById('s-test').classList.add('active');
+  loadProduct();
+}
+
+function loadProduct() {
+  const p = PRODUCTS[order[idx]];
+  document.getElementById('prod-img').src = p.img;
+  document.getElementById('prod-name').textContent = p.name;
+  document.getElementById('next-btn').disabled = true;
+  document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+}
+
+function selectQ1(v) {
+  score += v;
+  document.querySelectorAll('.choice-btn').forEach((b, i) => b.classList.toggle('selected', i === v));
+  document.getElementById('next-btn').disabled = false;
+}
+
+function nextStep() {
+  idx++;
+  if (idx < PRODUCTS.length) loadProduct(); else showResults();
+}
+
+function showResults() {
+  document.getElementById('s-test').classList.remove('active');
+  document.getElementById('s-results').classList.add('active');
+  document.getElementById('res-msg').textContent = "Merci d'avoir complété le test Biodiacritique.";
+}
+</script>
+</body>
+</html>
